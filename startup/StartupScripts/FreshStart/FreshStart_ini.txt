@@ -1,0 +1,7 @@
+Function:value     Element, förklaring (värden i heltal) (effekt)
+remove_cube:1      Kub, ta bort kuben från scenen (0-1) (off-on)
+remove_light:1     Ljus, ta bort punkljus från scenen (0-1) (off-on)
+add_sun:1          Sol, lägg till en sol (0-1) (off-on)
+sun_strength:4     Sol, styrka (0-9) (0-9 i styrka)
+sun_inclination:3  Sol, lutning (0-9) (ovanifrån 0, sidleds 9)
+sun_direction:1    Sol, riktning (0-9) (medsols framåt 0, bakåt 5)
