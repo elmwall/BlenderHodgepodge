@@ -79,86 +79,86 @@ def active_object():
     return bpy.context.active_object
 
 
-def time_seed():
-    """
-    Sets the random seed based on the time
-    and copies the seed into the clipboard
-    """
-    seed = time.time()
-    print(f"seed: {seed}")
-    random.seed(seed)
+#def time_seed():
+#    """
+#    Sets the random seed based on the time
+#    and copies the seed into the clipboard
+#    """
+#    seed = time.time()
+#    print(f"seed: {seed}")
+#    random.seed(seed)
 
-    # add the seed value to your clipboard
-    bpy.context.window_manager.clipboard = str(seed)
+#    # add the seed value to your clipboard
+#    bpy.context.window_manager.clipboard = str(seed)
 
-    return seed
-
-
-def set_fcurve_extrapolation_to_linear():
-    for fc in bpy.context.active_object.animation_data.action.fcurves:
-        fc.extrapolation = "LINEAR"
+#    return seed
 
 
-def create_data_animation_loop(obj, data_path, start_value, mid_value, start_frame, loop_length, linear_extrapolation=True):
-    """
-    To make a data property loop we need to:
-    1. set the property to an initial value and add a keyframe in the beginning of the loop
-    2. set the property to a middle value and add a keyframe in the middle of the loop
-    3. set the property the initial value and add a keyframe at the end of the loop
-    """
-    # set the start value
-    setattr(obj, data_path, start_value)
-    # add a keyframe at the start
-    obj.keyframe_insert(data_path, frame=start_frame)
-
-    # set the middle value
-    setattr(obj, data_path, mid_value)
-    # add a keyframe in the middle
-    mid_frame = start_frame + (loop_length) / 2
-    obj.keyframe_insert(data_path, frame=mid_frame)
-
-    # set the end value
-    setattr(obj, data_path, start_value)
-    # add a keyframe in the end
-    end_frame = start_frame + loop_length
-    obj.keyframe_insert(data_path, frame=end_frame)
-
-    if linear_extrapolation:
-        set_fcurve_extrapolation_to_linear()
+#def set_fcurve_extrapolation_to_linear():
+#    for fc in bpy.context.active_object.animation_data.action.fcurves:
+#        fc.extrapolation = "LINEAR"
 
 
-def set_scene_props(fps, frame_count):
-    """
-    Set scene properties
-    """
-    scene = bpy.context.scene
-    scene.frame_end = frame_count
+#def create_data_animation_loop(obj, data_path, start_value, mid_value, start_frame, loop_length, linear_extrapolation=True):
+#    """
+#    To make a data property loop we need to:
+#    1. set the property to an initial value and add a keyframe in the beginning of the loop
+#    2. set the property to a middle value and add a keyframe in the middle of the loop
+#    3. set the property the initial value and add a keyframe at the end of the loop
+#    """
+#    # set the start value
+#    setattr(obj, data_path, start_value)
+#    # add a keyframe at the start
+#    obj.keyframe_insert(data_path, frame=start_frame)
+
+#    # set the middle value
+#    setattr(obj, data_path, mid_value)
+#    # add a keyframe in the middle
+#    mid_frame = start_frame + (loop_length) / 2
+#    obj.keyframe_insert(data_path, frame=mid_frame)
+
+#    # set the end value
+#    setattr(obj, data_path, start_value)
+#    # add a keyframe in the end
+#    end_frame = start_frame + loop_length
+#    obj.keyframe_insert(data_path, frame=end_frame)
+
+#    if linear_extrapolation:
+#        set_fcurve_extrapolation_to_linear()
+
+
+#def set_scene_props(fps, frame_count):
+#    """
+#    Set scene properties
+#    """
+#    scene = bpy.context.scene
+#    scene.frame_end = frame_count
 
     # set the world background to black
-    world = bpy.data.worlds["World"]
-    if "Background" in world.node_tree.nodes:
-        world.node_tree.nodes["Background"].inputs[0].default_value = (0, 0, 0, 1)
+#    world = bpy.data.worlds["World"]
+#    if "Background" in world.node_tree.nodes:
+#        world.node_tree.nodes["Background"].inputs[0].default_value = (0, 0, 0, 1)
 
-    scene.render.fps = fps
+#    scene.render.fps = fps
 
-    scene.frame_current = 1
-    scene.frame_start = 1
+#    scene.frame_current = 1
+#    scene.frame_start = 1
 
 
 def scene_setup():
-    fps = 30
-    loop_seconds = 12
-    frame_count = fps * loop_seconds
+#    fps = 30
+#    loop_seconds = 12
+#    frame_count = fps * loop_seconds
 
-    seed = 0
-    if seed:
-        random.seed(seed)
-    else:
-        time_seed()
+#    seed = 0
+#    if seed:
+#        random.seed(seed)
+#    else:
+#        time_seed()
 
     clean_scene()
 
-    set_scene_props(fps, frame_count)
+#    set_scene_props(fps, frame_count)
 
 
 ################################################################
@@ -166,22 +166,47 @@ def scene_setup():
 ################################################################
 
 
+#node_x_location = -100
+#node_y_location = -200
+
+#node_location_step_x = 250
+#node_location_step_y = 200
+
+
+def create_node(node_tree, type_name, node_x_location, node_y_location, node_location_step_x, node_location_step_y):
+    # Add node
+    node_obj = node_tree.nodes.new(type=type_name)
+    # Set location of node
+    node_obj.location.x = node_x_location
+    node_obj.location.y = node_y_location
+    node_x_location += node_location_step_x
+    node_y_location += node_location_step_y
+    
+    return node_obj, node_x_location, node_y_location
+
+
+def connect_sockets(node_tree, from_node, to_node, from_socket, to_socket):
+    
+    # Connect specified nodes (from_node to to_node), via specified sockets (from_socket to to_socket)
+    node_tree.links.new(from_node.outputs[from_socket], to_node.inputs[to_socket])
+
+
 def update_geo_node_tree(node_tree):
     
     in_node = node_tree.nodes["Group Input"]
     out_node = node_tree.nodes["Group Output"]
     
-#    # training
-#    node_x_location = 0
-#    node_y_location = 0
+    # training
+    node_x_location = -100
+    node_y_location = -200
     
-    # Define start location
-    node_xC1_location = -100
-    node_yC1_location = -200
+#    # Define start location
+#    node_xC1_location = -100
+#    node_yC1_location = -200
     
     # Define steps per added node
-    node_location_step_x = 250
-    node_location_step_y = 200
+#    node_location_step_x = 250
+#    node_location_step_y = 200
     
 #    # training
 #    mesh_cube_node = node_tree.nodes.new(type="GeometryNodeMeshCube")
@@ -195,70 +220,95 @@ def update_geo_node_tree(node_tree):
 #    subdivide_mesh_node.location.y = node_y_location
 #    node_x_location += node_location_step_x
     
-    # Add Distribute Points on Faces node
-    distr_points_node = node_tree.nodes.new(type="GeometryNodeDistributePointsOnFaces")
-    # Set location of node
-    distr_points_node.location.x = node_xC1_location
-    distr_points_node.location.y = node_yC1_location
-    node_xC1_location += node_location_step_x
+#    # Add Distribute Points on Faces node
+#    distr_points_node = node_tree.nodes.new(type="GeometryNodeDistributePointsOnFaces")
+#    # Set location of node
+#    distr_points_node.location.x = node_xC1_location
+#    distr_points_node.location.y = node_yC1_location
+#    node_xC1_location += node_location_step_x
     
-    # Add Instance on Points node
-    instance_points_node = node_tree.nodes.new(type="GeometryNodeInstanceOnPoints")
-    # Set location of node
-    instance_points_node.location.x = node_xC1_location
-    instance_points_node.location.y = node_yC1_location
-    node_xC1_location += node_location_step_x
-    node_yC1_location += node_location_step_y
+    distr_points_node, node_x_location, node_y_location = create_node(node_tree, "GeometryNodeDistributePointsOnFaces", node_x_location, node_y_location, 250, 0)
     
-    # Add Join Geometry node
-    join_geometry_node = node_tree.nodes.new(type="GeometryNodeJoinGeometry")
-    # Set location of node
-    join_geometry_node.location.x = node_xC1_location
-    join_geometry_node.location.y = node_yC1_location
-    node_xC1_location += node_location_step_x
+#    # Add Instance on Points node
+#    instance_points_node = node_tree.nodes.new(type="GeometryNodeInstanceOnPoints")
+#    # Set location of node
+#    instance_points_node.location.x = node_xC1_location
+#    instance_points_node.location.y = node_yC1_location
+#    node_xC1_location += node_location_step_x
+#    node_yC1_location += node_location_step_y
+    
+    instance_points_node, node_x_location, node_y_location = create_node(node_tree, "GeometryNodeInstanceOnPoints", node_x_location, node_y_location, 250, 200)
+    
+#    # Add Join Geometry node
+#    join_geometry_node = node_tree.nodes.new(type="GeometryNodeJoinGeometry")
+#    # Set location of node
+#    join_geometry_node.location.x = node_xC1_location
+#    join_geometry_node.location.y = node_yC1_location
+#    node_xC1_location += node_location_step_x
+    
+    join_geometry_node, node_x_location, node_y_location = create_node(node_tree, "GeometryNodeJoinGeometry", node_x_location, node_y_location, 250, 0)
     
     #Update location of outputnode
-    out_node.location.x = node_xC1_location
-    out_node.location.y = node_yC1_location
+    out_node.location.x = node_x_location
+    out_node.location.y = node_y_location
     
 #    # training
 #    from_node = mesh_cube_node
 #    to_node = subdivide_mesh_node
 #    node_tree.links.new(from_node.outputs["Mesh"], to_node.inputs["Mesh"])
     
-    # Connect specified nodes (from_node to to_node), via specified sockets (from_socket to to_socket)
-    from_nodeC1 = in_node
-    from_socketC1 = "Geometry"
-    to_nodeC1 = distr_points_node
-    to_socketC1 = "Mesh"
-    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
+#    # Connect specified nodes (from_node to to_node), via specified sockets (from_socket to to_socket)
+#    from_nodeC1 = in_node
+#    from_socketC1 = "Geometry"
+#    to_nodeC1 = distr_points_node
+#    to_socketC1 = "Mesh"
+#    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
     
-    from_nodeC1 = distr_points_node
-    from_socketC1 = "Points"
-    to_nodeC1 = instance_points_node
-    to_socketC1 = "Points"
-    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
-    
-    from_nodeC1 = instance_points_node
-    from_socketC1 = "Instances"
-    to_nodeC1 = join_geometry_node
-    to_socketC1 = "Geometry"
-    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
-    
-    from_nodeC1 = in_node
-    from_socketC1 = "Geometry"
-    to_nodeC1 = join_geometry_node
-    to_socketC1 = "Geometry"
-    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
-    
-    from_nodeC1 = join_geometry_node
-    from_socketC1 = "Geometry"
-    to_nodeC1 = out_node
-    to_socketC1 = "Geometry"
-    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
+    connect_sockets(node_tree, in_node, distr_points_node, "Geometry", "Mesh")
     
     
+#    from_nodeC1 = distr_points_node
+#    from_socketC1 = "Points"
+#    to_nodeC1 = instance_points_node
+#    to_socketC1 = "Points"
+#    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
     
+    connect_sockets(node_tree, distr_points_node, instance_points_node, "Points", "Points")
+    
+    
+#    from_nodeC1 = instance_points_node
+#    from_socketC1 = "Instances"
+#    to_nodeC1 = join_geometry_node
+#    to_socketC1 = "Geometry"
+#    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
+    
+    connect_sockets(node_tree, instance_points_node, join_geometry_node, "Instances", "Geometry")
+    
+    
+#    from_nodeC1 = in_node
+#    from_socketC1 = "Geometry"
+#    to_nodeC1 = join_geometry_node
+#    to_socketC1 = "Geometry"
+#    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
+    
+    connect_sockets(node_tree, in_node, join_geometry_node, "Geometry", "Geometry")
+    
+    
+#    from_nodeC1 = join_geometry_node
+#    from_socketC1 = "Geometry"
+#    to_nodeC1 = out_node
+#    to_socketC1 = "Geometry"
+#    node_tree.links.new(from_nodeC1.outputs[from_socketC1], to_nodeC1.inputs[to_socketC1])
+    
+    connect_sockets(node_tree, join_geometry_node, out_node, "Geometry", "Geometry")
+    
+#    x = from_nodeC1.outputs[from_socketC1]
+#    print(x)
+#    print(type(x))
+    
+    
+
+
 
 def create_centerpiece():
     bpy.ops.mesh.primitive_plane_add()
@@ -268,16 +318,57 @@ def create_centerpiece():
 
 
 def main():
-    """
-    Python code to generate an animated geo nodes node tree
-    that consists of a subdivided & triangulated cube with animated faces
-    """
     scene_setup()
     create_centerpiece()
 
 
+class GeoNode_quicksetup_operator(bpy.types.Operator):
+    bl_idname = "quicksetup.exec_operator"
+    bl_label = "GeoNode quicksetup operator"
+    
+    def execute(self, context):
+        main()
+        return {'FINISHED'}
+
+
+class GEONODE_panel_nodesetup(bpy.types.Panel):
+    # Where to add the panel in the UI: in the 3D viewport sidebar region
+    bl_space_type = "NODE_EDITOR"
+    bl_region_type = "UI"
+    
+    # Labels
+    bl_category = "Quick Setup"   # sidebar tab name
+    bl_label = "Setups"       # panel top
+    
+    bl_idname = "NODE_EDITOR_PT_my_panel"
+    
+    # Layout
+    def draw(self, context):
+        """define panel layout"""
+        layout = self.layout
+        layout.operator("quicksetup.exec_operator", text = "Instances on Faces")
+
+quicksetup_classes = (
+    GeoNode_quicksetup_operator,
+    GEONODE_panel_nodesetup
+)
+
+
+
+# Register with Blender
+def register():
+    for cls in quicksetup_classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister():
+    for cls in reversed(quicksetup_classes):
+        bpy.utils.unregister_class(cls)
+
+
+
 if __name__ == "__main__":
-    main()
+    register()
 
 
 
