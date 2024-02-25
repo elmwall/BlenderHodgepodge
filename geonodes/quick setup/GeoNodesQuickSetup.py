@@ -91,7 +91,7 @@ def update_geo_node_tree(node_tree):
 
 # Check modifiers and whether one is a
 # The function should only be applied for Geometry Nodes modifier on an active object 
-def check_GeoNode_modifiers():
+def check_geonode_modifiers():
     # Define active object
     active_object = bpy.context.active_object
     for modifier in active_object.modifiers:
@@ -104,9 +104,9 @@ def check_GeoNode_modifiers():
 # Function to call to specify the node tree and run the node tree modifications onto that
 def main():
     # Verify Geometry Node group
-    is_GeoNode_modifier, modifier = check_GeoNode_modifiers()
+    is_geonode_modifier, modifier = check_geonode_modifiers()
     # Run functions: Set name of modifier to be edited, and perform modification
-    if is_GeoNode_modifier:
+    if is_geonode_modifier:
         try:
             node_tree = modifier.node_group
             update_geo_node_tree(node_tree)
@@ -114,24 +114,24 @@ def main():
             return
 
 
-class run_GeoNode_QuickSetup(bpy.types.Operator):
+class RunQuickSetup(bpy.types.Operator):
     bl_idname = "node.run_geonode_quicksetup"  # Reference to call the class
-    bl_label = "Run Geo Node Quick Setup"
+    bl_label = "Run GeoNode Quick Setup"
     
     def execute(self, context):
         # Verify Geometry Node group, if true: run main
         try:
-            is_GeoNode_modifier, modifier = check_GeoNode_modifiers()
+            is_geonode_modifier, modifier = check_geonode_modifiers()
         except:
             return {'CANCELLED'}
-        if is_GeoNode_modifier:
+        if is_geonode_modifier:
             main()
             return {'FINISHED'}
         else:
             return {'CANCELLED'}
 
 
-class GEONODE_panel_nodesetup(bpy.types.Panel):
+class GeoNodePanel(bpy.types.Panel):
     # Where to add the panel in the UI: in the 3D viewport sidebar region
     bl_space_type = "NODE_EDITOR"
     bl_region_type = "UI"
@@ -140,7 +140,7 @@ class GEONODE_panel_nodesetup(bpy.types.Panel):
     bl_category = "Quick Setup"   # sidebar tab name
     bl_label = "Setups"       # panel top
     
-    bl_idname = "NODE_EDITOR_PT_my_panel"
+    bl_idname = "NODE_EDITOR_PT_quicksetup_panel"
     
     # Layout
     def draw(self, context):
@@ -149,8 +149,8 @@ class GEONODE_panel_nodesetup(bpy.types.Panel):
         layout.operator("node.run_geonode_quicksetup", text = "Instances on Faces")
 
 quicksetup_classes = (
-    run_GeoNode_QuickSetup,
-    GEONODE_panel_nodesetup
+    RunQuickSetup,
+    GeoNodePanel
 )
 
 
