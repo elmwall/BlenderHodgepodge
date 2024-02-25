@@ -1,20 +1,29 @@
-INSTALLATION
+# Custumized Startup Settings
+
+## Notes
+
+The functions of this addons are in reality obsolete; custom changes for startup regarding scene and settings can be saved as a startup file, using File > Defaults > Save Startup File.
+
+The purpose of this project is for creating understanding of working with Blender API and Python, interacting with properties using code, and setting requirements for when changes are to be applied.
+
+
+## INSTALLATION
 Gå till Preferences > Add-ons, välj installera. Lägg till ZIP-filen.
 
 
-INSTÄLLNINGAR - Hur du gör egna anpassningar av detta add-on
+## INSTÄLLNINGAR - Hur du gör egna anpassningar av detta add-on
 Du kan göra egna justeringar i FreshStart_ini.txt för ett antal förinställda anpassningar.
 Du kan slå av och på eller justera anpassningar genom att ändra värden i FreshStart_ini.txt.
 Numeriska alternativ för inställningar anges till höger.
 
-I enkelhet:
+### I enkelhet:
 För att göra ändringar, byt ut ett värde mot ett annat.
 OBS. Ange värden i heltal.
 0-1 alternativ slår av eller på en inställning.
 Övriga återger värden i jämna intervall enligt angivelse.
 
 
-ÄNDRINGAR I FILEN
+### ÄNDRINGAR I FILEN
 Se till att ändringarna är sparade i den komprimerade filen.
 Ditt Windows eller ditt komprimeringsverktyg löser antagligen detta.
 
@@ -25,7 +34,7 @@ Se då till att ZIP-filen innehåller:
 - README.md
 
 
-FÖRTYDLIGANDE AV INSTÄLLNINGAR
+### FÖRTYDLIGANDE AV INSTÄLLNINGAR
 - remove_cube:1
   0: av, 1: på och tar då alltså bort kuben
 - remove_light:1
@@ -45,7 +54,7 @@ FÖRTYDLIGANDE AV INSTÄLLNINGAR
   Med vyn/kameran i +y-riktning: 1-2 lyser framåt åt höger, 8-9 från vänster.
   
 
-Format: 
+### Format: 
 Function:value       Element, förklaring (värden i heltal) (effekt)
 Function: vilken funktion
 value: värdet som påverkar funktionen, DEN ENDA DU SKA ÄNDRA PÅ.
