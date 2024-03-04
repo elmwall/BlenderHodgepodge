@@ -1,5 +1,5 @@
-# upgraded-broccoli 
-## - Early Stage Blender Scripting Projects
+# A Hodgepodge of Blender Scripts
+## - Early Stage Project Ideas for Blender Addons
 
 ## Overview
 
